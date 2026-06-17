@@ -19,7 +19,7 @@ title: Gabriel Lapointe Blog # the main title
 tagline: Engineer Student in AI, machine learning and LLMs field # it will display as the subtitle
 
 description: >- # used by seo meta and the atom feed
-Research and projects sharing 
+  A blog about AI, machine learning and LLMs field, written by Gabriel Lapointe.
 # Fill in the protocol & hostname for your site.
 # E.g. 'https://username.github.io', note that it does not end with a '/'.
 url: "https://van-tran-19.github.io"
