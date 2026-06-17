@@ -1,6 +1,6 @@
 ---
 title: "First Post"
-date: 2026-06-17 13:00:00 +0200
+date: 2026-06-16 10:00:00 +0200
 categories: [Blog]
 tags: [AI, ML]
 ---
