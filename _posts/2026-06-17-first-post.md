@@ -4,15 +4,14 @@ date: 2026-06-16 10:00:00 +0200
 categories: [Blog]
 tags: [AI, ML]
 ---
-My Journey Toward Becoming an LLM Engineer (2026–2028)
-Over the next two years, I’m committing myself to a clear and ambitious goal: becoming a Large Language Model Engineer capable of contributing to cutting‑edge AI systems — and ultimately joining a company like Mistral AI.
+Over the next two years, I’m committing myself to a clear and ambitious goal: becoming a Large Language Model Engineer capable of contributing to cutting‑edge AI systems and ultimately joining a company like Mistral AI.
 This blog will be my public record of that journey. I’ll share the skills I’m learning, the projects I’m building, the papers I’m studying, and the lessons I pick up along the way.
 
 Why I’m Pursuing This Path
 What fascinates me about LLM engineering is the intersection of deep learning, systems design, and large‑scale optimization. Modern language models are not just neural networks; they are complex software systems. They involve distributed training pipelines, inference engines, retrieval architectures, and a deep understanding of both mathematics and engineering.
 
 My goal is to become the kind of engineer who can not only train models, but also optimize them, deploy them, evaluate them, and understand them at a fundamental level.
-This blog is my way of staying accountable — and hopefully helping others who are on a similar path.
+This blog is my way of staying accountable and hopefully helping others who are on a similar path.
 
 Building the Foundations (2026–2027)
 Before diving into advanced LLM systems, I need a solid engineering base. That starts with Python at an engineer‑level: type‑safe code, clean logging, modular design, robust error handling, asynchronous programming, multiprocessing, and proper unit testing with pytest. These are the habits that make large projects maintainable.
@@ -56,7 +55,7 @@ In 2026, I’ll build a full RAG pipeline, experiment with LoRA fine‑tuning on
 
 In 2027, I’ll tackle more advanced challenges: multi‑source RAG with reranking, a multi‑model benchmark (Mistral vs LLaMA vs Qwen), a vLLM inference API, and a mini‑Transformer implemented from scratch.
 
-In 2028, I aim to reach “Mistral level”: training a small LLM (125M–350M), building a complete pipeline from data to inference, and designing a full LLM system with RAG, agents, monitoring, and a UI — along with advanced GPU optimizations.
+In 2028, I aim to reach “Mistral level”: training a small LLM (125M–350M), building a complete pipeline from data to inference, and designing a full LLM system with RAG, agents, monitoring, and a UI along with advanced GPU optimizations.
 
 These projects will form the backbone of my portfolio.
 
