@@ -15,7 +15,7 @@ timezone: Europe/Paris
 # jekyll-seo-tag settings › https://github.com/jekyll/jekyll-seo-tag/blob/master/docs/usage.md
 # ↓ --------------------------
 
-title: Gabriel Lapointe Blog # the main title
+title: Gabriel Lapointe # the main title
 
 tagline: Engineer Student in AI, machine learning and LLMs field # it will display as the subtitle
 
@@ -43,36 +43,36 @@ social:
     - https://github.com/Van-tran-19 # change to your GitHub homepage
     # Uncomment below to add more social links
     # - https://www.facebook.com/username
-    - www.linkedin.com/in/gabriel-lapointe-b40a70193
+    - https://www.linkedin.com/in/gabriel-lapointe-b40a70193
 
 # Site Verification Settings
-webmaster_verifications:
-  google: # fill in your Google verification code
-  bing: # fill in your Bing verification code
-  alexa: # fill in your Alexa verification code
-  yandex: # fill in your Yandex verification code
-  baidu: # fill in your Baidu verification code
-  facebook: # fill in your Facebook verification code
+#webmaster_verifications:
+  #google: # fill in your Google verification code
+  #bing: # fill in your Bing verification code
+  #alexa: # fill in your Alexa verification code
+  #yandex: # fill in your Yandex verification code
+  #baidu: # fill in your Baidu verification code
+  #facebook: # fill in your Facebook verification code
 
 # ↑ --------------------------
 # The end of `jekyll-seo-tag` settings
 
 # Web Analytics Settings
-analytics:
-  google:
-    id: # fill in your Google Analytics ID
-  goatcounter:
-    id: # fill in your GoatCounter ID
-  umami:
-    id: # fill in your Umami ID
-    domain: # fill in your Umami domain
-  matomo:
-    id: # fill in your Matomo ID
-    domain: # fill in your Matomo domain
-  cloudflare:
-    id: # fill in your Cloudflare Web Analytics token
-  fathom:
-    id: # fill in your Fathom Site ID
+#analytics:
+  #google:
+    #id: # fill in your Google Analytics ID
+  #goatcounter:
+    #id: # fill in your GoatCounter ID
+  #umami:
+    #id: # fill in your Umami ID
+    #domain: # fill in your Umami domain
+  #matomo:
+    #id: # fill in your Matomo ID
+    #domain: # fill in your Matomo domain
+  #cloudflare:
+    #id: # fill in your Cloudflare Web Analytics token
+  #fathom:
+    #id: # fill in your Fathom Site ID
 
 # Page views settings
 pageviews:
