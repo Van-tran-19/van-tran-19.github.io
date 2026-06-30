@@ -38,14 +38,14 @@ Self attention answers one question: for a given token, which other in the seque
 
 Attention mechanism computes: 
 
-$\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V$
+$$\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V$$
 
 Meaning:
 
-- $Q$$K^T$ = similarity between tokens
+- $QK^T$ = similarity between tokens
 - softmax = turns similarities into weights
 
-$\text{softmax}(z_i) = \frac{e^{z_i}}{\sum_{j=1}^{K} e^{z_j}}$
+$$\text{softmax}(z_i) = \frac{e^{z_i}}{\sum_{j=1}^{K} e^{z_j}}$$
 
 - multiply by $V$ = weighted sum of information
 
@@ -56,7 +56,7 @@ This gives each token a **context‑aware representation**.
 An **RNN (Recurrent Neural Network)** is a neural network designed to process **sequences** (text, audio, time series) by keeping a **hidden state** that carries information from previous steps.
 An RNN processes a sequence **one token at a time**, and at each step it updates a **hidden state**:
 
-$h_t=f(h_t−1,x_t)$ 
+$$h_t = f(h_{t-1}, x_t)$$
 
 Where:
 
@@ -81,46 +81,40 @@ It learns to separate data into categories. It makes a decision or judgement. Th
 
 A mathematical view: 
 
-We consider a joint distribution over inputs and outputs $(X,Y) \sim p(x,y)$. Discriminative modeling learns the conditional probability distribution $p(y|x)$ or a joint predictor $f(x)$ directly. The distribution captures the likelihood of observing an output y given an input x. This is achieved by defining a family of parameterized probability distributions $q_ \theta (y|x)$ where the model $f_\theta(x)$ determines the key parameters of the distribution. One of the main examples are 
+We consider a joint distribution over inputs and outputs $(X,Y) \sim p(x,y)$. Discriminative modeling learns the conditional probability distribution $p(y|x)$ or a joint predictor $f(x)$ directly. The distribution captures the likelihood of observing an output y given an input x. This is achieved by defining a family of parameterized probability distributions $q_\theta(y|x)$ where the model $f_\theta(x)$ determines the key parameters of the distribution. One of the main examples are 
 
 - regression (which can predict patient recovery time, stock price forecasting, house price estimation…)
 - classification (which can be used to spam detection, medical imaging, image recognition)
 
 In discriminative modeling, the goal is to train a model whose $q_\theta(y|x)$ is as close as possible to the true distribution $p_\text{true}(y|x)$ and the standard measure to measure for the distance between 2 probability distributions is Kullback-Leibler Divergence (KL div). 
 
-$\mathrm{KL}\!\left(p_{\text{true}} \,\|\, q_{\theta}\right)
-= \underbrace{\mathbb {E}_{y \sim p_{\text{true}}}\!\left[-\log p_{\text{true}}(y \mid x)\right]}_{\text{Entropy of true data}} + \underbrace{\mathbb{E}_{y \sim p_{\text{true}}}\!\left[-\log q_{\theta}(y \mid x)\right]}_{\text{Cross-Entropy}}$
+$$\mathrm{KL}\!\left(p_{\text{true}} \,\|\, q_{\theta}\right) = \underbrace{\mathbb {E}_{y \sim p_{\text{true}}}\!\left[-\log p_{\text{true}}(y \mid x)\right]}_{\text{Entropy of true data}} + \underbrace{\mathbb{E}_{y \sim p_{\text{true}}}\!\left[-\log q_{\theta}(y \mid x)\right]}_{\text{Cross-Entropy}}$$
 
 Then, objective of learning is to find the model parameters $\theta$ that minimize the KL div, averaged over all the possible inputs: 
 
-$\theta^* = \arg\min_{\theta} \, \mathbb{E}_{x \sim p_{\text{true}}(x)}
-\left[ \mathrm{KL}\big(p_{\text{true}}(y \mid x) \,\|\, q_{\theta}(y \mid x)\big) \right]$
+$$\theta^* = \arg\min_{\theta} \, \mathbb{E}_{x \sim p_{\text{true}}(x)} \left[ \mathrm{KL}\big(p_{\text{true}}(y \mid x) \,\|\, q_{\theta}(y \mid x)\big) \right]$$
 
 This shows that minimizing the KL div is equivalent to minimizing the cross entropy. This is the principle of MLE (maximum likelihood estimation)
 
-$\theta^* = \arg\min_{\theta} \,
-\mathbb{E}_{(x,y)\sim p_{\text{true}}}\!\left[-\log q_{\theta}(y \mid x)\right]$
+$$\theta^* = \arg\min_{\theta} \, \mathbb{E}_{(x,y)\sim p_{\text{true}}}\!\left[-\log q_{\theta}(y \mid x)\right]$$
 
 We approximate the true risk using our finite training dataset of n samples. This approximate is called the Empirical Risk. 
 
-$\hat{R}(f) = \frac{1}{n} \sum_{i=1}^{n} \ell\!\left(y_i,\, f(x_i)\right)$
+$$\hat{R}(f) = \frac{1}{n} \sum_{i=1}^{n} \ell\!\left(y_i,\, f(x_i)\right)$$
 
 The best parameters are find by minimizing the empirical average: the ERM (Empirical Risk Minimization) procedure: 
 
-$\theta^* \approx \arg\min_{\theta} \,
-\frac{1}{n} \sum_{i=1}^{n} \left[-\log q_{\theta}(y_i \mid x_i)\right]$
+$$\theta^* \approx \arg\min_{\theta} \, \frac{1}{n} \sum_{i=1}^{n} \left[-\log q_{\theta}(y_i \mid x_i)\right]$$
 
-the term $l(y \mid \hat{y}) =  -log q_{\theta}(y_i \mid x_i)$ is the loss function for a singe data point. 
+the term $\ell(y \mid \hat{y}) = -\log q_{\theta}(y_i \mid x_i)$ is the loss function for a singe data point. 
 
 Ultimately, the true goal is to minimize the Population Risk: 
 
-$\mathcal{R}(f)
-= \mathbb{E}{(X,Y)\sim p_{\text{true}}}\!\left[\ell\!\left(Y,\, f(X)\right)\right]$
+$$\mathcal{R}(f) = \mathbb{E}_{(X,Y)\sim p_{\text{true}}}\!\left[\ell\!\left(Y,\, f(X)\right)\right]$$
 
 An good indactor to know if the model generalizes well is the gap, as small as gap is: 
 
-$\text{Gap}(f)
-= \mathcal{R}(f) - \widehat{\mathcal{R}}(f)$
+$$\text{Gap}(f) = \mathcal{R}(f) - \widehat{\mathcal{R}}(f)$$
 
 By the law of large numbers: with enough representative data, training performance approaches true performance. 
 
@@ -138,7 +132,7 @@ Neural networks are powerful function approximators composed of interconnected l
 
 It learns the underlying structure of the data itself in order to create new, original data. They are designed to learn directly the joint probability $p(y,x)$. In a sence, there is no conceptual distinction between x’s and y’s. The core idea is the following:
 
-Given a dataset of observations $\mathcal{D} = \{\, \mathbf{x}_i \,\}_{i=1}^{N}$ sampled from an unkown distribution $p_d(x)$, learn a parametric model $p_\theta(x)$ $\approx p_d(x)$. First, the method requires density estimation: evaluate $p_\theta(\tilde{x})$ for a new $\tilde{x}$ and generation: draw new samples $x_\text{new} \sim p_\theta(x)$. Generative AI requires manifold hypothesis, high-dimensional data often concentrate near a lower-dimensional manifold; generative models aim to learn its structure. 
+Given a dataset of observations $\mathcal{D} = \{\, \mathbf{x}_i \,\}_{i=1}^{N}$ sampled from an unkown distribution $p_d(x)$, learn a parametric model $p_\theta(x) \approx p_d(x)$. First, the method requires density estimation: evaluate $p_\theta(\tilde{x})$ for a new $\tilde{x}$ and generation: draw new samples $x_\text{new} \sim p_\theta(x)$. Generative AI requires manifold hypothesis, high-dimensional data often concentrate near a lower-dimensional manifold; generative models aim to learn its structure. 
 
 #### List of alternatives
 
@@ -164,7 +158,7 @@ Variational autoencoders (VAEs)
 
 This is where the data and the parameters come together. The principle is the following: 
 
-$w \leftarrow w - \eta \nabla L$
+$$w \leftarrow w - \eta \nabla L$$
 
 - $w$ is the weight of the model
 - $L$ is the loss function (how wrong the model is)
@@ -177,17 +171,15 @@ Overfitting means **memorizing** the training data instead of **understanding** 
 
 Training loss:
 
-$L_{\text{train}}(\theta)
-= \frac{1}{N} \sum_{i=1}^{N} \ell\!\left(f_{\theta}(x_i),\, y_i\right)$
+$$L_{\text{train}}(\theta) = \frac{1}{N} \sum_{i=1}^{N} \ell\!\left(f_{\theta}(x_i),\, y_i\right)$$
 
 Testing loss:
 
-$L_{\text{test}}(\theta)
-= \mathbb{E}_{(x,y)\sim \mathcal{D}_{\text{test}}}\!\left[\ell\!\left(f_{\theta}(x),\, y\right)\right]$
+$$L_{\text{test}}(\theta) = \mathbb{E}_{(x,y)\sim \mathcal{D}_{\text{test}}}\!\left[\ell\!\left(f_{\theta}(x),\, y\right)\right]$$
 
 A large gap indicates overfitting: 
 
-$L_{\text{test}}(\theta^*) \gg L_{\text{train}}(\theta^*)$
+$$L_{\text{test}}(\theta^*) \gg L_{\text{train}}(\theta^*)$$
 
 This mismatch can be caused by a distribution shift between the training data $D_\text{train}$ and the testing data $D_\text{test}$. [4]
 
@@ -205,7 +197,7 @@ To optimize inference, engineers use techniques such as:
 
 #### Quantization
 
-AI models are essentially giant mathematical matrices. By default, these numbers are stored as highly precise 32-bit decimals (FP32: floating points 32 bits). Quantization rounds these numbers down to 16-bit, 8-bit, or even 4-bit integers. The fact is that during training, values are stored using a range of $2*10³⁸-1$ numbers. The conversion at each step makes the values round up to the closest number, make it losing precision but in the same time, loading file much faster. [5]
+AI models are essentially giant mathematical matrices. By default, these numbers are stored as highly precise 32-bit decimals (FP32: floating points 32 bits). Quantization rounds these numbers down to 16-bit, 8-bit, or even 4-bit integers. The fact is that during training, values are stored using a range of $2*10^{38}-1$ numbers. The conversion at each step makes the values round up to the closest number, make it losing precision but in the same time, loading file much faster. [5]
 
 In mathematical terms, quantization is the problem of representing a continuous random variable $X$ using a finite number of bits according to the Shannon’s theory (How do we represent a continous random variable by a finite number of bits?). If you are given $R$ bits to represent $X$, the representation $\hat{X}$can take on at most $2^R$ discrete values.
 
@@ -217,34 +209,28 @@ If you have only 1 bits to reprensent some values. 1 bit corresponding to 0 or 1
 
 1. **Finding Code Points:** Finding the optimal set of discrete values (code points) for $\hat{X}$ to represent each region in order to minimize a specific distortion measure $D(R)$ which is the cost or error of representing $X$ by $\hat{X}$. 
 
-**A Mathematical Example: 1-Bit Quantization** by applying a 1-bit quantization ($R=1$) to a Gaussian random variable $X∼\mathcal{N}
-(0,σ^2)$:
+**A Mathematical Example: 1-Bit Quantization** by applying a 1-bit quantization ($R=1$) to a Gaussian random variable $X \sim \mathcal{N}(0,\sigma^2)$:
 
 - With 1 bit, you can represent $2^1=2$ values, so the real line is divided into a positive region and a negative region.
 - The optimal code point for the positive real line is its centroid a
 
 which is calculated using the conditional expectation be
 
-$E[X \mid X > 0] = \int_{0}^{\infty} x \frac{1}{\sqrt{2\pi\sigma^2}} e^{-\frac{x^2}{2\sigma^2}} \, dx = \sigma \sqrt{\frac{2}{\pi}}$
+$$E[X \mid X > 0] = \int_{0}^{\infty} x \frac{1}{\sqrt{2\pi\sigma^2}} e^{-\frac{x^2}{2\sigma^2}} \, dx = \sigma \sqrt{\frac{2}{\pi}}$$
 
 - This means the quantized value becomes
 
-$\hat{X} = \sigma \sqrt{\frac{2}{\pi}} \quad \text{if } X \ge 0, 
-\qquad 
-\hat{X} = -\sigma \sqrt{\frac{2}{\pi}} \quad \text{if } X < 0$
+$$\hat{X} = \sigma \sqrt{\frac{2}{\pi}} \quad \text{if } X \ge 0, \qquad \hat{X} = -\sigma \sqrt{\frac{2}{\pi}} \quad \text{if } X < 0$$
 
-Where $σ = 1$: 
+Where $\sigma = 1$: 
 
 <img width="527" height="340" alt="image" src="https://github.com/user-attachments/assets/14cfc6f4-90fb-4b24-bf39-3985e63c00d8" />
 
-
-It means that at $\hat{X} = ±0.79$, instead of using the entire continous values between $[-4; 4]$, all values are reshaped into two different areas: $+\hat{X}$ or $-\hat{X}$
+It means that at $\hat{X} = \pm 0.79$, instead of using the entire continous values between $[-4; 4]$, all values are reshaped into two different areas: $+\hat{X}$ or $-\hat{X}$
 
 - The resulting quantization error is calculated as
 
-$D(R) = E[(X - \hat{X})^2]
-= \left( \frac{\pi - 2}{\pi} \right) \sigma^2
-\approx 0.36 \sigma^2$
+$$D(R) = E[(X - \hat{X})^2] = \left( \frac{\pi - 2}{\pi} \right) \sigma^2 \approx 0.36 \sigma^2$$
 
 Distortion error is like the trade off
 
