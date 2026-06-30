@@ -38,11 +38,11 @@ Self attention answers one question: for a given token, which other in the seque
 
 Attention mechanism computes: 
 
-$$\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V$$
+$$\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{Q K^T}{\sqrt{d_k}}\right)V$$
 
 Meaning:
 
-- $QK^T$ = similarity between tokens
+- $Q K^T$ = similarity between tokens
 - softmax = turns similarities into weights
 
 $$\text{softmax}(z_i) = \frac{e^{z_i}}{\sum_{j=1}^{K} e^{z_j}}$$
@@ -77,16 +77,16 @@ AI can be discriminative or generative depending on its role.
 
 ### Discriminative AI
 
-It learns to separate data into categories. It makes a decision or judgement. They are designed to learn a direct mapping from inputs to outputs, or more formally, to model the conditional probability $p(x|y)$. Few examples include digit recognition, image classification, object segmentation (autonomous driving), object detection, 3D reconstruction, etc.
+It learns to separate data into categories. It makes a decision or judgement. They are designed to learn a direct mapping from inputs to outputs, or more formally, to model the conditional probability $p(x \mid y)$. Few examples include digit recognition, image classification, object segmentation (autonomous driving), object detection, 3D reconstruction, etc.
 
 A mathematical view: 
 
-We consider a joint distribution over inputs and outputs $(X,Y) \sim p(x,y)$. Discriminative modeling learns the conditional probability distribution $p(y|x)$ or a joint predictor $f(x)$ directly. The distribution captures the likelihood of observing an output y given an input x. This is achieved by defining a family of parameterized probability distributions $q_\theta(y|x)$ where the model $f_\theta(x)$ determines the key parameters of the distribution. One of the main examples are 
+We consider a joint distribution over inputs and outputs $(X,Y) \sim p(x,y)$. Discriminative modeling learns the conditional probability distribution $p(y \mid x)$ or a joint predictor $f(x)$ directly. The distribution captures the likelihood of observing an output y given an input x. This is achieved by defining a family of parameterized probability distributions $q_\theta(y \mid x)$ where the model $f_\theta(x)$ determines the key parameters of the distribution. One of the main examples are 
 
 - regression (which can predict patient recovery time, stock price forecasting, house price estimation…)
 - classification (which can be used to spam detection, medical imaging, image recognition)
 
-In discriminative modeling, the goal is to train a model whose $q_\theta(y|x)$ is as close as possible to the true distribution $p_\text{true}(y|x)$ and the standard measure to measure for the distance between 2 probability distributions is Kullback-Leibler Divergence (KL div). 
+In discriminative modeling, the goal is to train a model whose $q_\theta(y \mid x)$ is as close as possible to the true distribution $p_{\text{true}}(y \mid x)$ and the standard measure to measure for the distance between 2 probability distributions is Kullback-Leibler Divergence (KL div). 
 
 $$\mathrm{KL}\!\left(p_{\text{true}} \,\|\, q_{\theta}\right) = \underbrace{\mathbb {E}_{y \sim p_{\text{true}}}\!\left[-\log p_{\text{true}}(y \mid x)\right]}_{\text{Entropy of true data}} + \underbrace{\mathbb{E}_{y \sim p_{\text{true}}}\!\left[-\log q_{\theta}(y \mid x)\right]}_{\text{Cross-Entropy}}$$
 
@@ -132,7 +132,7 @@ Neural networks are powerful function approximators composed of interconnected l
 
 It learns the underlying structure of the data itself in order to create new, original data. They are designed to learn directly the joint probability $p(y,x)$. In a sence, there is no conceptual distinction between x’s and y’s. The core idea is the following:
 
-Given a dataset of observations $\mathcal{D} = \{\, \mathbf{x}_i \,\}_{i=1}^{N}$ sampled from an unkown distribution $p_d(x)$, learn a parametric model $p_\theta(x) \approx p_d(x)$. First, the method requires density estimation: evaluate $p_\theta(\tilde{x})$ for a new $\tilde{x}$ and generation: draw new samples $x_\text{new} \sim p_\theta(x)$. Generative AI requires manifold hypothesis, high-dimensional data often concentrate near a lower-dimensional manifold; generative models aim to learn its structure. 
+Given a dataset of observations $\mathcal{D} = \lbrace \mathbf{x}_i \rbrace_{i=1}^{N}$ sampled from an unkown distribution $p_d(x)$, learn a parametric model $p_\theta(x) \approx p_d(x)$. First, the method requires density estimation: evaluate $p_\theta(\tilde{x})$ for a new $\tilde{x}$ and generation: draw new samples $x_{\text{new}} \sim p_\theta(x)$. Generative AI requires manifold hypothesis, high-dimensional data often concentrate near a lower-dimensional manifold; generative models aim to learn its structure. 
 
 #### List of alternatives
 
@@ -181,7 +181,7 @@ A large gap indicates overfitting:
 
 $$L_{\text{test}}(\theta^*) \gg L_{\text{train}}(\theta^*)$$
 
-This mismatch can be caused by a distribution shift between the training data $D_\text{train}$ and the testing data $D_\text{test}$. [4]
+This mismatch can be caused by a distribution shift between the training data $D_{\text{train}}$ and the testing data $D_{\text{test}}$. [4]
 
 ## Inference Optimizations
 
@@ -197,9 +197,9 @@ To optimize inference, engineers use techniques such as:
 
 #### Quantization
 
-AI models are essentially giant mathematical matrices. By default, these numbers are stored as highly precise 32-bit decimals (FP32: floating points 32 bits). Quantization rounds these numbers down to 16-bit, 8-bit, or even 4-bit integers. The fact is that during training, values are stored using a range of $2*10^{38}-1$ numbers. The conversion at each step makes the values round up to the closest number, make it losing precision but in the same time, loading file much faster. [5]
+AI models are essentially giant mathematical matrices. By default, these numbers are stored as highly precise 32-bit decimals (FP32: floating points 32 bits). Quantization rounds these numbers down to 16-bit, 8-bit, or even 4-bit integers. The fact is that during training, values are stored using a range of $2 \times 10^{38} - 1$ numbers. The conversion at each step makes the values round up to the closest number, make it losing precision but in the same time, loading file much faster. [5]
 
-In mathematical terms, quantization is the problem of representing a continuous random variable $X$ using a finite number of bits according to the Shannon’s theory (How do we represent a continous random variable by a finite number of bits?). If you are given $R$ bits to represent $X$, the representation $\hat{X}$can take on at most $2^R$ discrete values.
+In mathematical terms, quantization is the problem of representing a continuous random variable $X$ using a finite number of bits according to the Shannon’s theory (How do we represent a continous random variable by a finite number of bits?). If you are given $R$ bits to represent $X$, the representation $\hat{X}$ can take on at most $2^R$ discrete values.
 
 The mathematical process of quantization involves two main steps:
 
@@ -226,7 +226,7 @@ Where $\sigma = 1$:
 
 <img width="527" height="340" alt="image" src="https://github.com/user-attachments/assets/14cfc6f4-90fb-4b24-bf39-3985e63c00d8" />
 
-It means that at $\hat{X} = \pm 0.79$, instead of using the entire continous values between $[-4; 4]$, all values are reshaped into two different areas: $+\hat{X}$ or $-\hat{X}$
+It means that at $\hat{X} = \pm 0.79$, instead of using the entire continous values between $[-4, 4]$, all values are reshaped into two different areas: $+\hat{X}$ or $-\hat{X}$
 
 - The resulting quantization error is calculated as
 
