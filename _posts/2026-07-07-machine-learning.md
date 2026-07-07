@@ -21,7 +21,7 @@ The principle of models is based on the idea that by using previous data, it is 
 
 <img width="454" height="281" alt="image" src="https://github.com/user-attachments/assets/1061aea8-0c51-4a96-9b3f-cdf7095799cc" />
 
-The primary problem of this model is that it is not complex enough to precisely predict the future price of the house. Capturing more factors leads to a tree with more splits: a "deeper" tree. Picking the path corresponding to a specific house's characteristics will lead directly to the predicted price of the house at the bottom of the tree (the leaf). An important point I learned is that the predicted price is driven by the data itself; the more accurate the data is, the more correct the predicted price will be.
+Capturing more factors leads to a tree with more splits: a "deeper" tree. Picking the path corresponding to a specific characteristics will lead directly to the predicted value at the bottom of the tree (the leaf). An important point I learned is that the predicted price is driven by the data itself; the more accurate the data is, the more correct the predicted price will be.
 
 ### Basic Data exploration [1]
 
