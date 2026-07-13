@@ -6,7 +6,7 @@ tags: [Claude, Claude Code, Claude Cowork, Anthropic, Agents, WSL]
 toc: true
 math: true
 ---
-# Claude Code vs Cowork Anthropic
+# Claude Code vs Claude Cowork 
 
 As a future AI engineer, I noticed that Anthropic has created very powerful tools used everywhere. I decided to write this post to clarify my confusion about Claude Code and Claude Cowork. It’s an opportunity to learn how to use these powerful tools.
 
