@@ -4,6 +4,7 @@ date: 2026-07-13 16:32:00 +0200
 categories: [Tools]
 tags: [Claude, Claude Code, Claude Cowork, Anthropic, Agents, WSL]
 toc: true
+math: true
 ---
 # Claude Code vs Cowork Anthropic
 
