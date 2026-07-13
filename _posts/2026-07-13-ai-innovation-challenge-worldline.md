@@ -26,7 +26,7 @@ Platform reliability, network operations, incident management, monitoring.
 - Risk, Compliance & Fraud
 Regulatory compliance, fraud detection, AML/KYC, audit.
 
-The Team combines technical diversities with different domain specializations across three countries from France, Sweden to Romania: 
+My Team combines technical diversities with different domain specializations across three countries from France, Sweden to Romania and is composed by:
 
 - Alexandra-Catalina, project manager in Romania
 - Baptiste Guillot, information security officer in France
