@@ -22,7 +22,7 @@ Instead of rewriting the same long prompt every time, a skill becomes a reusable
 
 **Skills Architecture** https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview#how-skills-work
 
-<img width="615" height="334" alt="image" src="https://github.com/user-attachments/assets/501d8b9d-fde5-4de6-a285-cc9c4824b1e2" />
+<img width="615" height="334" alt="image" src="https://github.com/user-attachments/assets/41e0e3a9-6fcc-4a0a-ab86-144378f6d368" />
 
 ### Why skills are useful?
 
@@ -172,4 +172,4 @@ An LLM API is a programming interface that lets the user to send text to an LLM 
 1. https://www.deeplearning.ai/courses/agent-skills-with-anthropic
 2. https://agentskills.io/home
 3. https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview#how-skills-work
-4. https://github.com/anthropics/skills/tree/main/skills![Uploading image.png…]()
+4. https://github.com/anthropics/skills/tree/main/skills
