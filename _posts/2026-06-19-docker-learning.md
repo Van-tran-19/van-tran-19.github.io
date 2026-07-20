@@ -1,5 +1,5 @@
 ---
-title: "Docker: to understand, to install and to use"
+title: "Docker: Build, Ship, and Run Anywhere"
 date: 2026-06-19 10:00:00 +0200
 categories: [Tools]
 tags: [Docker, DevOps]
