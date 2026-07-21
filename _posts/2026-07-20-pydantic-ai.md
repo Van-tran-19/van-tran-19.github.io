@@ -69,6 +69,8 @@ You must use the virtual environment whenever you want to run Pydantic.
 
 **Validator skeleton: Pydantic model for each agent’s output.**
 
+`output_validator.py` is the component that guarantees your agent’s output is valid, structured, and exactly matches the schema you defined with Pydantic.
+
 ```python
 # output_validator.py
 
@@ -85,6 +87,8 @@ class OutputValidator:
         except ValidationError as e:
             raise ValueError(f"Output validation failed:\n{e}") from e
 ```
+`Schema`: The Pydantic model describing what the agent must output.
+`validate()`: Attempts to validate the LLM output. If validation succeeds, then it returns a clean, typed Pydantic object and if validation fails, it raises a detailed error.
 
 **What is Base Model?** 
 
