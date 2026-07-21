@@ -4,6 +4,7 @@ date: 2026-07-20 16:25:00 +0200
 categories: [Tools]
 tags: [Pydantic AI, AI, Agents, Validation, Skills, Structured-Outputs]
 toc: true
+math: true
 ---
 # Pydantic AI
 
