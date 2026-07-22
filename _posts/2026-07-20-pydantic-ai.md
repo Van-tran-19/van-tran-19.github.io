@@ -69,8 +69,6 @@ You must use the virtual environment whenever you want to run Pydantic.
 
 **Validator skeleton: Pydantic model for each agent’s output.**
 
-`output_validator.py` is the component that guarantees your agent’s output is valid, structured, and exactly matches the schema you defined with Pydantic.
-
 ```python
 # output_validator.py
 
@@ -87,8 +85,6 @@ class OutputValidator:
         except ValidationError as e:
             raise ValueError(f"Output validation failed:\n{e}") from e
 ```
-`Schema`: The Pydantic model describing what the agent must output.
-`validate()`: Attempts to validate the LLM output. If validation succeeds, then it returns a clean, typed Pydantic object and if validation fails, it raises a detailed error.
 
 **What is Base Model?** 
 
@@ -136,6 +132,86 @@ def test_loader_output_schema():
 ```
 
 ## My first script Pydantic AI
+
+My goal was to write 2 smalls scripts for my sub-agent Parser and one for my sub-agent Answer.
+
+#### Sub-agent Parser
+
+```python
+From pydantic import BaseModel, field_validator, model_validator
+import json
+import re
+import sys
+ 
+class Question(BaseModel):
+    id: str
+    text: str
+ 
+    @field_validator("id")
+    @classmethod
+    def id_must_match_pattern(cls, v):
+        if not v.strip():
+            raise ValueError("id is empty")
+        if not re.match(r"^\d+(\.\d+)+$", v):
+            raise ValueError(f"id '{v}' does not match pattern")
+        return v
+ 
+    @field_validator("text")
+    @classmethod
+    def text_must_not_be_empty(cls, v):
+        if not v.strip():
+            raise ValueError("text is empty")
+        return v
+ 
+class ParserOutput(BaseModel):
+    questions: list[Question]
+ 
+    @model_validator(mode="after")
+    def check_no_duplicates(self):
+        ids = [q.id for q in self.questions]
+        duplicates = [id for id in ids if ids.count(id) > 1]
+        if duplicates:
+            raise ValueError(f"Duplicate IDs found: {set(duplicates)}")
+        return self
+ 
+    @model_validator(mode="after")
+    def check_not_empty(self):
+        if not self.questions:
+            raise ValueError("questions array is empty")
+        return self
+ 
+def validate(data: dict) -> dict:
+    try:
+        parsed = ParserOutput(**data)
+        return {
+            "status": "valid",
+            "question_count": len(parsed.questions)
+        }
+    except Exception as e:
+        return {
+            "status": "invalid",
+            "question_count": len(data.get("questions", [])),
+            "issues": str(e)
+        }
+ 
+if __name__ == "__main__":
+    if len(sys.argv) > 1:
+        with open(sys.argv[1], "r") as f:
+            data = json.load(f)
+    else:
+        data = json.load(sys.stdin)
+ 
+    result = validate(data)
+    print(json.dumps(result, indent=2))
+    sys.exit(0 if result["status"] == "valid" else 1)
+```
+
+#### Sub-agent Answer
+
+```python
+from pydantic import BaseModel
+
+```
 
 ## Sources
 
