@@ -72,9 +72,9 @@ SpaceX’s AI1 satellite is a solar‑powered supercomputer in low‑Earth orbit
 ## Sources
 
 1. https://factually.co/fact-checks/technology/effects-of-ai-on-environment-vs-social-media-9210f2
-2. https://factually.co/fact-checks/technology/effects-of-ai-on-environment-vs-social-media-ba0841?utm_source=copilot.com
-3. https://www.reuters.com/sustainability/climate-energy/why-does-elon-musk-want-put-ai-data-centers-space-2026-01-29/?utm_source=copilot.com
-4. https://cambridgereview.uk/articles/global-datacenter-expansion-2026?utm_source=copilot.com
+2. https://factually.co/fact-checks/technology/effects-of-ai-on-environment-vs-social-media-ba0841
+3. https://www.reuters.com/sustainability/climate-energy/why-does-elon-musk-want-put-ai-data-centers-space-2026-01-29/
+4. https://cambridgereview.uk/articles/global-datacenter-expansion-2026
 
 **Is Factually a reliable source?**
 
