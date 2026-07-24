@@ -24,7 +24,6 @@ Instead of rewriting the same long prompt every time, a skill becomes a reusable
 
 <img width="615" height="334" alt="image" src="https://github.com/user-attachments/assets/da5d7dbf-14ff-47b2-8f80-c0c4b4b34650" />
 
-
 ### Why skills are useful?
 
 Skills package all instructions into a reusable module. They spare the user from writing long prompts, repeating manual steps, and overloading the context window. Because skills follow an open standard, they work across major LLM providers. When a CSV file is dropped into the conversation, the LLM automatically reads the instructions defined inside the skill, applies them to the CSV, loads additional reference files only when needed, and executes the entire workflow all without requiring long prompts from the user. 
@@ -267,6 +266,14 @@ A Skill is not a giant prompt. It is a compact instruction module.
 
 Each skill must do one thing at a time. If a Skill becomes too long, it means it is doing too many tasks. Skills must contain only operational instructions. This keeps Skills short and predictable.
 
+#### 4th Learning: Don’t use skills as a pydantic script
+
+A skill mustn’t run python script, a skill is used to guide the agent. Schema validation must be done externally, not by the model. A model mustn’t be used as a security tools. 
+
+#### **5th Learning: How to make an agent search only within a specific Confluence URL, even though the agent already has broad access to Kazan Confluence through MCP tools?**
+
+You can define a **Skill** that forces the agent to prioritize or restrict its search to that exact URL, and this approach works because Skills guide and constrain how the agent uses the MCP tools.
+
 ### Agent Orchestrator
 
 This agent goal is to route input/output to the correct sub-agent. 
@@ -418,7 +425,8 @@ python
 "routing_failure"
 "source_unreachable"
 "unknown_error"
-Output Contract
+
+## Output Contract
 json
 {
   "status": "error",
@@ -821,65 +829,738 @@ This agent is responsible to answer question from questionnaire or simple questi
 **Skill kb-loader-matcher**
 
 ```markdown
-charge KB.json for memory
-store in cache
-avoid rereading
+---
+name: skill-kb-loader-matcher 
+description: Loads KB.json into memory, caches it for the full run, and finds the most 
+relevant KB entry for a given question. Performs no answering, interpretation, or 
+content modification.
+---
+
+## Purpose
+Load KB.json once at startup and cache it for the entire run.
+For each input question, search the cache and return the most relevant KB entry with a 
+match quality score. Never reload the file between questions.
+
+## Input Contract
+json
+{
+  "question": {
+    "id": "string",
+    "text": "string",
+    "lang": "string"
+  }
+}
+id: question identifier from parser output
+text: verbatim question text
+lang: detected language code from skill-language-detector
+Forbidden: null or empty text
+Forbidden: calling this skill before KB.json is loaded
+
+## Output Contract
+json
+{
+  "question_id": "string",
+  "kb_entry": {
+    "id": "string",
+    "question_text": "string",
+    "answer_text": "string",
+    "tags": ["string"],
+    "sources": ["string"],
+    "status": "string",
+    "needs_review": "boolean",
+    "review_note": "string"
+  },
+  "match_quality": "direct | partial | weak | none"
+}
+kb_entry: null if match_quality is "none"
+match_quality: exactly one of the four allowed values
+Forbidden: omitting match_quality
+Forbidden: returning multiple KB entries
+
+## Match quality rules:
+
+sql
+"direct"  → question_text similarity > 90%, same language, status active
+"partial" → question_text similarity 60–90%, or different language match
+"weak"    → similarity 30–60%, or needs_review flagged
+"none"    → similarity < 30% or no relevant entry found
+
+## Positive Rules
+Always load KB.json once and store in memory cache at startup
+Always reuse cache, never reload between questions
+Always return match_quality even if kb_entry is null
+If multiple KB entries match → return highest similarity score only
+If KB entry language differs from question lang → still return it, flag as partial
+
+## Negative Rules
+Never answer the question
+Never modify KB entry content
+Never merge multiple KB entries
+Never reload KB.json between questions
+Never return match_quality = "direct" if needs_review is true
+Never omit kb_entry structure when match exists
+
+## Deterministic Logic
+sql
+STARTUP:
+1. Load KB.json from file system
+2. Store all entries in memory cache
+3. Set cache_ready = true
+
+PER QUESTION:
+1. Receive question object
+2. Assert cache_ready == true
+3. For each KB entry:
+   a. Compute text similarity score (question.text vs entry.question_text)
+   b. Check language match (question.lang vs entry.language)
+   c. Check entry.status and entry.needs_review
+4. Select entry with highest similarity score
+5. Assign match_quality:
+   - score > 90% AND same lang AND not needs_review → "direct"
+   - score 60–90% OR different lang                → "partial"
+   - score 30–60% OR needs_review == true           → "weak"
+   - score < 30% OR no entry found                  → "none"
+6. Return output object
+
+## Examples
+
+### Example Input
+json
+{
+  "question": {
+    "id": "1.01",
+    "text": "Does your organisation have documented Information Security policies?",
+    "lang": "en"
+  }
+}
+### Example Output
+json
+{
+  "question_id": "1.01",
+  "kb_entry": {
+    "id": "SRC-KB-1.1",
+    "question_text": "Does your organisation have documented Information Security policies?",
+    "answer_text": "Yes, Worldline maintains documented Information Security policies reviewed annually.",
+    "tags": ["policy", "security"],
+    "sources": ["SG_questionnaire_2025.xlsx"],
+    "status": "active",
+    "needs_review": false,
+    "review_note": ""
+  },
+  "match_quality": "direct"
+}
 ```
 
 **Skill language-detector**
 
 ```markdown
-detect language for input
-all generated question must be in this language 
+---
+name: skill-language-detector 
+description: Detects the language of each input question and returns a language code. 
+Performs no translation, answering, or content modification.
+---
+
+## Purpose
+Detect the language of each input question text.
+Return a standard language code per question.
+All downstream skills must generate answer text in this detected language.
+
+## Input Contract
+json
+{
+  "question": {
+    "id": "string",
+    "text": "string"
+  }
+}
+text: verbatim question text — minimum 3 characters
+Forbidden: null or empty text
+Forbidden: pre-labelled language input
+
+## Output Contract
+json
+{
+  "question_id": "string",
+  "lang": "string"
+}
+lang: ISO 639-1 language code — e.g. "en", "fr", "de"
+If language cannot be detected → lang = "en" as default
+Forbidden: returning null lang
+Forbidden: returning full language name instead of code
+
+## Positive Rules
+Always return exactly one language code per question
+Always use ISO 639-1 two-letter codes
+If detection is ambiguous → default to "en"
+Always return question_id unchanged from input
+
+## Negative Rules
+Never translate question text
+Never answer the question
+Never return multiple language codes
+Never return null or empty lang
+
+## Deterministic Logic
+sql
+1. Receive question object
+2. Analyse question.text for language signals
+3. Match against known language patterns
+4. If match found   → lang = ISO 639-1 code
+5. If no match      → lang = "en"
+6. Return {question_id, lang}
+
+## Examples
+
+### Example Input
+json
+{"question": {"id": "1.01", "text": "Does your organisation have documented policies?"}}
+### Example Output
+json
+{"question_id": "1.01", "lang": "en"}
+
+### Example Input
+json
+{"question": {"id": "2.01", "text": "Votre organisation effectue-t-elle des évaluations des risques?"}}
+### Example Output
+json
+{"question_id": "2.01", "lang": "fr"}
 ```
 
 **Skill source-router**
 
 ```markdown
-decide which sources must be called for each question
-KB if match 
-KB+ confluence if ...
-KB+confluence+gitlab
-```
+---
+name: skill-source-router 
+description: Decides which sources to query for each question based on KB match quality. Returns an ordered source plan. Performs no answering, fetching, or content generation.
+---
 
-**Skill kb-matcher**
+## Purpose
+Receive the KB match quality for a question.
+Return a deterministic ordered list of sources to query.
+Minimize source calls never call Confluence or GitLab if KB is sufficient.
 
-```markdown
-search for the most pertinent response for the question
+## Input Contract
+json
+{
+  "question_id": "string",
+  "question_text": "string",
+  "match_quality": "direct | partial | weak | none"
+}
+
+## match_quality: 
+exactly one of the four allowed values
+Forbidden: null or missing match_quality
+
+## Output Contract
+json
+{
+  "question_id": "string",
+  "sources_to_query": ["kb", "confluence", "gitlab"]
+}
+sources_to_query: ordered array of source identifiers
+Allowed values per item: "kb", "confluence", "gitlab"
+Minimum one source always present
+Forbidden: empty sources_to_query array
+
+## Routing rules:
+css
+"direct"  → ["kb"]
+"partial" → ["kb", "confluence"]
+"weak"    → ["kb", "confluence"]
+"none"    → ["kb", "confluence", "gitlab"]
+
+## Positive Rules
+Always include "kb" as first source regardless of match quality
+If match_quality is "direct" → return ["kb"] only
+If match_quality is "partial" or "weak" → return ["kb", "confluence"]
+If match_quality is "none" → return ["kb", "confluence", "gitlab"]
+Always preserve the order: kb → confluence → gitlab
+
+## Negative Rules
+Never call Confluence if match_quality is "direct"
+Never call GitLab if Confluence has not been queried first
+Never return an empty sources array
+Never reorder the source priority
+Never add sources outside the three allowed values
+
+## Deterministic Logic
+css
+1. Receive question_id, question_text, match_quality
+2. Switch match_quality:
+   - "direct"           → sources = ["kb"]
+   - "partial" | "weak" → sources = ["kb", "confluence"]
+   - "none"             → sources = ["kb", "confluence", "gitlab"]
+3. Return {question_id, sources_to_query: sources}
+
+## Examples
+### Example Input
+json
+{"question_id": "1.01", "question_text": "Do you have an IS policy?", "match_quality": "direct"}
+### Example Output
+json
+{"question_id": "1.01", "sources_to_query": ["kb"]}
+
+### Example Input
+json
+{"question_id": "7.05", "question_text": "How often do you conduct penetration tests?", "match_quality": "none"}
+### Example Output
+json
+{"question_id": "7.05", "sources_to_query": ["kb", "confluence", "gitlab"]}
 ```
 
 **Skill confluence-search**
 
 ```markdown
-call the MCP confluence with a specific url
-used if kb-matcher is weaken
+---
+name: skill-confluence-search 
+description: Calls the MCP Confluence tool with a targeted query and returns the raw page content. Only activated when kb-matcher returns partial, weak, or none match quality. Performs no answering or interpretation.
+---
+
+## Purpose
+Query the approved Confluence space using the MCP Confluence tool.
+Return raw page content as plain text.
+Never called if KB match quality is direct.
+
+## Input Contract
+json
+{
+  "question_id": "string",
+  "query": "string",
+  "approved_spaces": ["string"]
+}
+query: verbatim question text used as search query
+approved_spaces: list of allowed Confluence space keys
+Forbidden: querying spaces not in approved_spaces
+Forbidden: calling this skill if match_quality is "direct"
+
+##Approved spaces:
+python
+"TA-Security"
+"Worldline-Policies"
+Output Contract
+json
+{
+  "question_id": "string",
+  "confluence_result": "string | null",
+  "page_title": "string | null",
+  "page_url": "string | null"
+}
+confluence_result: raw plain text content of the page — null if nothing found
+page_title: exact title of the Confluence page — null if nothing found
+page_url: full URL of the page — null if nothing found
+Forbidden: returning HTML or markdown-formatted content
+Forbidden: returning multiple pages merged into one result
+
+## Positive Rules
+Always restrict search to approved_spaces only
+Always return plain text content — strip navigation, headers, footers
+Always return page_title and page_url alongside content
+If no result found → return null for all three result fields
+Always return question_id unchanged
+
+## Negative Rules
+Never query unapproved Confluence spaces
+Never interpret or summarise page content
+Never merge content from multiple pages
+Never call this skill if match_quality is "direct"
+Never return HTML tags in confluence_result
+
+## Deterministic Logic
+sql
+1. Receive question_id, query, approved_spaces
+2. Call MCP Confluence tool with query
+3. Filter results to approved_spaces only
+4. If results found:
+   a. Select top result
+   b. Extract plain text content — strip HTML
+   c. Extract page_title and page_url
+   d. Return full output object
+5. If no results:
+   a. Return {question_id, confluence_result: null, page_title: null, page_url: null}
+
+## Examples
+
+### Example Input
+json
+{
+  "question_id": "7.05",
+  "query": "How often do you conduct penetration tests?",
+  "approved_spaces": ["TA-Security", "Worldline-Policies"]
+}
+### Example Output
+json
+{
+  "question_id": "7.05",
+  "confluence_result": "Worldline conducts external penetration tests every 24 months on infrastructure processing client data...",
+  "page_title": "Vulnerability Management Policy",
+  "page_url": "https://confluence.worldline.com/display/TA-Security/Vulnerability+Management"
+}
 ```
 
 **Skill code-source**
 
 ```markdown
-call MCP gitlab with specific url
+---
+name: skill-code-source 
+description: Calls the MCP GitLab tool with a targeted query and returns relevant code references. Only activated when both KB and Confluence returned no usable result. Performs no answering or interpretation.
+---
+
+## Purpose
+Query the approved GitLab repository using the MCP GitLab tool.
+Return relevant code comments, README excerpts, or configuration references.
+Never called unless KB and Confluence both returned null results.
+
+## Input Contract
+json
+{
+  "question_id": "string",
+  "query": "string",
+  "approved_repos": ["string"]
+}
+query: verbatim question text used as search query
+approved_repos: list of allowed repository paths
+Forbidden: querying repos not in approved_repos
+Forbidden: calling this skill if KB or Confluence returned a usable result
+
+## Output Contract
+json
+{
+  "question_id": "string",
+  "gitlab_result": "string | null",
+  "file_path": "string | null",
+  "repo": "string | null"
+}
+gitlab_result: relevant extracted text — null if nothing found
+file_path: exact file path within the repository — null if nothing found
+repo: repository name — null if nothing found
+Forbidden: returning full file contents — extract only relevant lines
+
+## Positive Rules
+Always restrict search to approved_repos only
+Always return only relevant lines — not the full file
+Always return file_path and repo alongside content
+If no result found → return null for all three result fields
+
+## Negative Rules
+Never query unapproved repositories
+Never return full file content
+Never interpret or summarise code
+Never call this skill if KB or Confluence returned usable content
+Never answer the question
+
+## Deterministic Logic
+sql
+1. Receive question_id, query, approved_repos
+2. Call MCP GitLab tool with query
+3. Filter results to approved_repos only
+4. If results found:
+   a. Extract relevant lines only (README, comments, config)
+   b. Extract file_path and repo name
+   c. Return full output object
+5. If no results:
+   a. Return {question_id, gitlab_result: null, file_path: null, repo: null}
+
+## Examples
+
+### Example Input
+json
+{
+  "question_id": "9.06",
+  "query": "automated source code analysis security",
+  "approved_repos": ["worldline/ta-security", "worldline/ta-policies"]
+}
+### Example Output
+json
+{
+  "question_id": "9.06",
+  "gitlab_result": "# SAST is enforced via SonarQube on every merge request to main branch.",
+  "file_path": "docs/SDLC.md",
+  "repo": "worldline/ta-security"
+}
 ```
 
 **Skill kb**
 
 ```markdown
-generate the final response with the most useful source available 
+---
+name: skill-kb 
+description: Generates the final answer text for a question using the best available source. Performs faithful reformulation only. Never invents facts or adds content absent from the source.
+---
+
+## Purpose
+Receive the best available source result (KB, Confluence, or GitLab).
+Generate a clean, professional answer in the question's detected language.
+Apply strict source fidelity, reformulation allowed.
+
+## Input Contract
+json
+{
+  "question_id": "string",
+  "question_text": "string",
+  "lang": "string",
+  "kb_entry": "object | null",
+  "confluence_result": "string | null",
+  "gitlab_result": "string | null"
+}
+At least one source must be non-null or produce a refusal entry
+lang: ISO 639-1 code from skill-language-detector
+Forbidden: generating content without a source
+Forbidden: combining facts from multiple sources in one answer
+
+## Output Contract
+json
+{
+  "question_id": "string",
+  "answer_text": "string",
+  "source_used": "kb | confluence | gitlab | none"
+}
+answer_text: professional answer in detected language — never empty
+source_used: exactly one of the four allowed values
+If source_used is "none" → answer_text = refusal message in detected language
+Refusal messages:
+
+json
+"en": "Source information missing"
+"fr": "Information source manquante"
+
+## Positive Rules
+Priority order: kb_entry → confluence_result → gitlab_result → refusal
+Always generate answer in the detected language
+Always use the highest-priority non-null source available
+If kb_entry exists → use answer_text, faithfully rephrased
+If only confluence_result → extract and rephrase relevant content
+If only gitlab_result → extract and rephrase relevant content
+If all sources null → return refusal message in detected language
+
+## Negative Rules
+Never invent facts absent from the source
+Never combine content from multiple sources
+Never answer in a different language than detected
+Never return empty answer_text
+Never skip the refusal entry if all sources are null
+
+## Deterministic Logic
+sql
+1. Receive all source inputs
+2. Select source by priority:
+   a. If kb_entry != null       → source = "kb",         use kb_entry.answer_text
+   b. Else if confluence != null → source = "confluence", use confluence_result
+   c. Else if gitlab != null    → source = "gitlab",     use gitlab_result
+   d. Else                      → source = "none",       use refusal message[lang]
+3. Rephrase selected content in lang — no new facts added
+4. Return {question_id, answer_text, source_used}
+
+## Examples
+
+### Example Input
+json
+{
+  "question_id": "1.01",
+  "question_text": "Does your organisation have documented IS policies?",
+  "lang": "en",
+  "kb_entry": {"answer_text": "Yes, Worldline maintains documented IS policies reviewed annually."},
+  "confluence_result": null,
+  "gitlab_result": null
+}
+### Example Output
+json
+{
+  "question_id": "1.01",
+  "answer_text": "Yes, Worldline maintains documented Information Security policies, reviewed on an annual basis.",
+  "source_used": "kb"
+}
 ```
 
 **Skill confidence-scorer**
 
 ```markdown
-give a bucket confidence score for each generated response 
+---
+name: skill-confidence-scorer 
+description: Assigns exactly one confidence bucket to a generated answer based on source quality and match characteristics. Returns a percentage string. Performs no content generation or modification.
+---
+
+Purpose
+Receive the source used, match quality, and KB entry metadata.
+Return exactly one confidence bucket as a percentage string.
+No interpretation — purely rule-based assignment.
+
+## Input Contract
+json
+{
+  "question_id": "string",
+  "source_used": "kb | confluence | gitlab | none",
+  "match_quality": "direct | partial | weak | none",
+  "needs_review": "boolean"
+}
+Forbidden: null source_used or match_quality
+Forbidden: receiving values outside allowed enums
+
+## Output Contract
+json
+{
+  "question_id": "string",
+  "confidence": "95% | 80% | 60% | 40% | 10%"
+}
+confidence: exactly one of the five allowed string values
+Forbidden: words like "high", "low", "medium"
+Forbidden: bare numbers without % sign
+Forbidden: values outside the five allowed buckets
+
+## Positive Rules
+Always return exactly one confidence string
+If source_used = "none" → always return "10%"
+If needs_review = true → downgrade one bucket level
+Apply bucket strictly from the logic table below
+Bucket assignment table:
+
+sql
+source=kb,         match=direct,  needs_review=false → "95%"
+source=kb,         match=direct,  needs_review=true  → "80%"
+source=kb,         match=partial, needs_review=false → "80%"
+source=kb,         match=partial, needs_review=true  → "60%"
+source=kb,         match=weak                        → "40%"
+source=confluence, any match                         → "80%"
+source=confluence, match=partial                     → "60%"
+source=gitlab,     any match                         → "40%"
+source=none                                          → "10%"
+
+## Negative Rules
+Never output a word instead of a percentage string
+Never output a value outside the five allowed buckets
+Never assign "95%" if needs_review is true
+Never assign anything other than "10%" for source=none
+
+## Deterministic Logic
+sql
+1. Receive question_id, source_used, match_quality, needs_review
+2. If source_used == "none"       → confidence = "10%"
+3. If source_used == "gitlab"     → confidence = "40%"
+4. If source_used == "confluence":
+   - match == "direct" | "partial" → confidence = "80%"
+   - match == "weak"               → confidence = "60%"
+5. If source_used == "kb":
+   - match == "direct" AND needs_review == false → confidence = "95%"
+   - match == "direct" AND needs_review == true  → confidence = "80%"
+   - match == "partial" AND needs_review == false → confidence = "80%"
+   - match == "partial" AND needs_review == true  → confidence = "60%"
+   - match == "weak"                              → confidence = "40%"
+6. Return {question_id, confidence}
+
+## Examples
+
+### Example Input
+json
+{"question_id": "1.01", "source_used": "kb", "match_quality": "direct", "needs_review": false}
+### Example Output
+json
+{"question_id": "1.01", "confidence": "95%"}
+
+### Example Input
+json
+{"question_id": "7.05", "source_used": "none", "match_quality": "none", "needs_review": false}
+### Example Output
+json
+{"question_id": "7.05", "confidence": "10%"}
 ```
 
 **Skill Source-resolver**
 
 ```markdown
-determine real name of the source to cite
-KB: metadat.sources
-confluence: web title page
-Gitlab: path repo
+---
+name: skill-source-resolver 
+description: Determines the real document name or path to cite in the source field of the answer output. Performs no content generation or answering. Returns a string or empty string.
+---
+
+## Purpose
+Receive the source used and associated metadata.
+Return the exact document name, page title, or file path to cite.
+Never return "KB.json" or any internal system reference.
+
+## Input Contract
+json
+{
+  "question_id": "string",
+  "source_used": "kb | confluence | gitlab | none",
+  "kb_entry": {
+    "sources": ["string"]
+  },
+  "page_title": "string | null",
+  "file_path": "string | null",
+  "repo": "string | null"
+}
+kb_entry.sources: array from KB metadata — may be empty
+Forbidden: null source_used
+Forbidden: passing internal system filenames as source
+
+## Output Contract
+json
+{
+  "question_id": "string",
+  "source": "string"
+}
+source: real document name, page title, or repo/file path
+If no source determinable → source = ""
+Forbidden: returning "KB.json" as source value
+Forbidden: returning null — always return string or empty string
+
+## Positive Rules
+If source_used = "kb" → use first entry in kb_entry.sources
+If source_used = "confluence" → use page_title
+If source_used = "gitlab" → use "repo/file_path" format
+If source_used = "none" → return ""
+If kb_entry.sources is empty → return ""
+
+## Negative Rules
+Never return "KB.json" as source
+Never return null
+Never invent a source name not provided in input
+Never combine multiple source names into one string
+
+## Deterministic Logic
+bash
+1. Receive question_id, source_used, and metadata
+2. Switch source_used:
+   a. "kb":
+      - If kb_entry.sources is non-empty → source = sources[0]
+      - If kb_entry.sources is empty     → source = ""
+   b. "confluence":
+      - If page_title != null → source = page_title
+      - If page_title == null → source = ""
+   c. "gitlab":
+      - If repo and file_path != null → source = repo + "/" + file_path
+      - Otherwise                     → source = ""
+   d. "none" → source = ""
+3. Return {question_id, source}
+
+## Examples
+
+### Example Input — KB source
+json
+{
+  "question_id": "1.01",
+  "source_used": "kb",
+  "kb_entry": {"sources": ["Knowledge_Base.xlsx"]},
+  "page_title": null,
+  "file_path": null,
+  "repo": null
+}
+### Example Output
+json
+{"question_id": "1.01", "source": "Knowledge_Base.xlsx"}
+
+### Example Input — GitLab source
+json
+{
+  "question_id": "9.06",
+  "source_used": "gitlab",
+  "kb_entry": {"sources": []},
+  "page_title": null,
+  "file_path": "docs/SDLC.md",
+  "repo": "worldline/ta-security"
+}
+### Example Output
+json
+{"question_id": "9.06", "source": "worldline/ta-security/docs/SDLC.md"}
 ```
 
 ## Sources
