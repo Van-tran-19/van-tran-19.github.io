@@ -21,7 +21,7 @@ Encryption is a core cryptographic technique used to protect data by converting 
 > 
 > 
 > 
-> 
+> <img width="434" height="76" alt="image" src="https://github.com/user-attachments/assets/4d1b104a-7971-45db-b955-f303966cd23f" />
 > 
 
 > Plain text is the data before encryption and after decryption. The cypher text is data after encrypted. To transform plain text into cypher text, algorithms are created by mathematician and cyber security expert. The recipient can interpret data because he gets a secret key that has been randomly generated.
@@ -38,7 +38,7 @@ Symmetric key encryption is a method where the same secret key is used for both 
 > 
 > 
 > 
-> 
+> <img width="376" height="116" alt="image 1" src="https://github.com/user-attachments/assets/80f2edce-a4ea-482d-afa7-8d94671b958d" />
 > 
 > In this example, encryption and decryption both use the same shared secret key = 3. 
 > 
