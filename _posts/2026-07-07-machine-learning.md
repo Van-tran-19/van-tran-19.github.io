@@ -215,6 +215,39 @@ forest_model.fit(train_X, train_y)
 cars_preds = forest_model.predict(val_X)
 print(mean_absolute_error(val_y, cars_preds))
 ```
+## Types of learning
+
+It exists four types of learning from data: Supervised learning, reinforcement learning, self-supervised learning and unsupervised learning. Actually, supervised learning is deeply more used (70%) than unsupervised learning. 
+
+**Supervised learning** 
+
+> 
+> 
+> 
+> <img width="401" height="154" alt="image 1" src="https://github.com/user-attachments/assets/dc68d3f4-7455-4950-ada0-6355c6fa2976" />
+> 
+
+**Unsupervised learning**
+
+> 
+> 
+> 
+> <img width="398" height="104" alt="image 2" src="https://github.com/user-attachments/assets/474878bb-486a-41bf-877c-0f03fafc7076" />
+> 
+
+**Reinforcement learning**
+
+The model finds patterns by its own and it learns from its mistakes, to map in the best way future strategies to maximize reward. 
+
+**Self-Supervised learning**
+
+> 
+> 
+> 
+> <img width="275" height="117" alt="image 3" src="https://github.com/user-attachments/assets/6f688545-0702-4cd9-8a07-2d412262fb5e" />
+> 
+> The data itself provides the supervision. A model learns by solving an artificial task built from unlabeled data. By doing so, it acquires useful internal representations that can later be used for real tasks. 
+> 
 
 ## Sources
 
@@ -222,3 +255,4 @@ print(mean_absolute_error(val_y, cars_preds))
 2. https://youtube.com/playlist?list=PLoROMvodv4rMiGQp3WXShtMGgzqpfVfbU&si=ii32GeBVI4rXx6rP
 3. [https://www.kaggle.com/learn](https://www.kaggle.com/learn)
 4. [https://scikit-learn.org/stable/modules/generated/sklearn.tree.DecisionTreeRegressor.html](https://scikit-learn.org/stable/modules/generated/sklearn.tree.DecisionTreeRegressor.html)
+5. https://www.iclimbtrees.com/courses
