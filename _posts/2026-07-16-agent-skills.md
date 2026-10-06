@@ -1,7 +1,7 @@
 ---
 title: "Stop Repeating Prompts: Build Real Agent Workflows with Skills"
 date: 2026-07-16 11:50:00 +0200
-categories: [Tools]
+categories: [AI, Agents, Tools]
 tags: [Skills, Automation, Claude, MCP, Tools, AI, Agents]
 toc: true
 ---
