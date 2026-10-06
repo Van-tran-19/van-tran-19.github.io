@@ -1,7 +1,7 @@
 ---
 title: "Pydantic AI: Ensuring Reliable and Structured Agent Outputs"
 date: 2026-07-20 16:25:00 +0200
-categories: [Tools]
+categories: [AI, Tools]
 tags: [Pydantic AI, AI, Agents, Validation, Skills, Structured-Outputs]
 toc: true
 math: true
