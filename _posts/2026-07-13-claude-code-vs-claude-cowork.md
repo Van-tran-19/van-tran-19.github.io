@@ -1,7 +1,7 @@
 ---
 title: "Claude Code vs Claude Cowork: Understanding Anthropic’s Agentic Tools"
 date: 2026-07-13 16:32:00 +0200
-categories: [Tools]
+categories: [AI, Tools]
 tags: [Claude, Claude Code, Claude Cowork, Anthropic, Agents, WSL]
 toc: true
 math: true
