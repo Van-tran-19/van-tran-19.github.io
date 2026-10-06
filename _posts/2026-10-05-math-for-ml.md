@@ -1,7 +1,7 @@
 ---
 title: "Mathematics for Machine Learning"
 date: 2026-10-05 20:53:00 +0200
-categories: [MachineLearning, Mathematics]
+categories: [Machine Learning, Mathematics]
 tags: [Calculus, LinearRegression, CostFunction]
 toc: true
 math: true
