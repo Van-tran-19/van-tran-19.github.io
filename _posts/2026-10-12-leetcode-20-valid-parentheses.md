@@ -60,16 +60,15 @@ My initial idea was to store bracket pairs using a mapping and loop through the 
 ```python
 class Solution:
     def isValid(self, s: str) -> bool:
-        mapping = { ")":"(", "}":"{", "]":"["           for c in brackets:
-              }
-      stack = []
-          for i in s:
-              for j in mapping:
-                  if s[i] == mapping[j]:
-                      for k in s[-1]:
-                          if s[k] == mapping[j][0] or s[k] == mapping[j][1]:
-                              return True
-      return False
+        mapping = { ")":"(", "}":"{", "]":"["}         
+        stack = []
+            for i in s:
+                for j in mapping:
+                    if s[i] == mapping[j]:
+                        for k in s[-1]:
+                            if s[k] == mapping[j][0] or s[k] == mapping[j][1]:
+                                return True
+        return False
 ```
 
 ## One possible solution
