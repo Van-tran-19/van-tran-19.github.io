@@ -76,17 +76,7 @@ The public key is used to encrypt data and the private key for decryption. It el
 | In symmetric key encryption, resource utilization is low compared to asymmetric key encryption. | In asymmetric key encryption, resource utilization is high. |
 | It is efficient as it is used for handling large amount of data. | It is comparatively less efficient as it can handle a small amount of data. |
 | Security is lower as only one key is used for both encryption and decryption purposes. | Security is higher as two keys are used, one for encryption and the other for decryption. |
-| **Mathematical representation:**        $P = D (K, E(K, P))$
-where
-$K$**:** encryption and decryption key
-$P$**:** plain text
-$D$**:** Decryption 
-$E(K, P)$**:** Encryption of plain text using $K$ | **Mathematical representation:**        $P = D(K_d, E (K_e,P))$
-where
-$K_e$**:** encryption key
-$K_d$**:** decryption key
-$D$**:** Decryption
-$E(K_e, P)$**:** Encryption of plain text using encryption key $K_e$. $P$ --> plain text |
+| **Mathematical representation:** $P = D (K, E(K, P))$ where $K$**:** encryption and decryption key; $P$**:** plain text; $D$**:** Decryption; $E(K, P)$**:** Encryption of plain text using $K$ | **Mathematical representation:** $P = D(K_d, E (K_e,P))$ where $K_e$**:** encryption key; $K_d$**:** decryption key; $D$**:** Decryption; $E(K_e, P)$**:** Encryption of plain text using encryption key $K_e$. $P$ --> plain text |
 | **Examples:** 3DES, AES, DES and RC4 | **Examples:** Diffie-Hellman, ECC, El Gamal, DSA and RSA |
 
 ## Big Data
