@@ -130,19 +130,13 @@ Bid Data provides the ability to handle the flood of information.
 
 ## Data management lifecycle
 
-| Data Acquisition/Collection | gathering, filtering, cleaning data before storage
-data sources: sensors, wearable devices, social networks, public registers, etc |
+| Phase | Description |
 | --- | --- |
-| Data Analysis | making “raw” collected data “meaningful” for decision making
-structured or unstructured data
-analysis techniques: descriptive, predictive, etc |
-| Data Curation | Making analysed data “qualitative”
-content creation, selection, classification, transformation, validation, preservation. |
-| Data Storage | storing and managing data while enabling access
-storage solutions: cloud storage, distributed storage |
-| Data Usage | use of data by interested parties
-public or restricted access
-potential users: general public, single organization, or multiple users such as banks, retailers, etc. |
+| Data Acquisition/Collection | gathering, filtering, cleaning data before storage; data sources: sensors, wearable devices, social networks, public registers, etc |
+| Data Analysis | making “raw” collected data “meaningful” for decision making structured or unstructured; data analysis techniques: descriptive, predictive, etc |
+| Data Curation | Making analysed data “qualitative” content creation, selection, classification, transformation, validation, preservation. |
+| Data Storage | storing and managing data while enabling access; storage solutions: cloud storage, distributed storage |
+| Data Usage | use of data by interested parties public or restricted access potential users: general public, single organization, or multiple users such as banks, retailers, etc. |
 
 ## Data privacy and security requirements
 
