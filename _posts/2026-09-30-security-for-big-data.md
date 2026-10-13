@@ -4,6 +4,7 @@ date: 2026-09-30 18:15:00 +0200
 categories: [Security, BigData]
 tags: [Cryptography, Symmetric, Asymmetric, Encryption]
 toc: true
+math: true
 ---
 # Security for BigData
 
@@ -33,7 +34,7 @@ Each method serves different purposes based on performance, security needs and u
 
 **Symmetric key encryption**
 
-Symmetric key encryption is a method where the same secret key is used for both encrypting and decrypting data. Encrypt and decrypt use the same key. Using symmetric key encryption is much faster than asymmetric encryption, that provides a lower CPU cost. 
+Symmetric key encryption is a method where the same secret key is used for both encrypting and decrypting data. Encrypt and decrypt use the same key. Using symmetric key encryption is much faster than asymmetric encryption which provides a lower CPU cost. 
 
 > 
 > 
@@ -59,7 +60,7 @@ This encryption uses a pair of keys: public key and private key to secure data.
 
 The public key is used to encrypt data and the private key for decryption. It eliminates the needed to share a secret key, which is improved security. It still slower than symmetric key it requires much more resources. Common algorithms include RSA, ECC, Diffie-Hellman, ElGamal, and DSA and its commonly used in SSL/TLS, digital signatures, secure emails, and authentication systems.
 
-> For example, the RSA algorithm can generate private and public key which are mathematically link together. Only the matching key can be used to decrypt the data encrypted. To exchange a message, the sender can use the public key of the receiver to encrypt the data and send it to the receiver. Then the receiver decrypt the message with its private key, who is the only person who have access to it. Nobody can decrypt the message without stealing the private key of the receiver.
+> For example, the RSA algorithm can generate private and public key which are mathematically linked together. Only the matching key can be used to decrypt the data encrypted. To exchange a message, the sender can use the public key of the receiver to encrypt the data and send it to the receiver. Then the receiver decrypt the message with its private key, who is the only person who have access to it. Nobody can decrypt the message without stealing the private key of the receiver.
 > 
 
 ### Symmetric vs Asymmetric
