@@ -16,9 +16,7 @@ Given a test point $x^*$, let us denote $S_{x^*}$ as its set of k nearest neighb
 
 **Formally:** 
 
-$S_{x^*} \subseteq D \;\text{s.t.}\; |S_{x^*}| = k$
-
-$\forall (x', y') \in D \setminus S_{x^*},\quad 
+$S_{x^*} \subseteq D \;\text{s.t.}\; |S_{x^*}| = k, \forall (x', y') \in D \setminus S_{x^*},\quad 
 \text{dist}(x^*, x') \ge 
 \max_{(x'', y'') \in S_{x^*}} \text{dist}(x^*, x'')$
 
