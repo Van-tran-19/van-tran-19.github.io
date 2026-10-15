@@ -6,6 +6,7 @@ tags: [KNN, DistanceMetrics, InstanceBasedLearning, Classification, Regression]
 toc: true
 math: true
 ---
+
 # K-nearest neighbors
 
 K-nearest neighbors is the oldest learning method. 
