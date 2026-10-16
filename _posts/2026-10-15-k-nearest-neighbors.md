@@ -13,31 +13,29 @@ K-nearest neighbors is the oldest learning method.
 
 ## Definition
 
-Given a test point $x^*$, let us denote $S_{x^*}$ as its set of k nearest neighbors.
+Given a test point $x^\ast$,let us denote $S_{x^*}$ as its set of k nearest neighbors.
 
 **Formally:** 
 
-$S_{x^*} \subseteq D \;\text{s.t.}\; |S_{x^*}| = k, \forall (x', y') \in D \setminus S_{x^*},\quad 
-\text{dist}(x^*, x') \ge 
-\max_{(x'', y'') \in S_{x^*}} \text{dist}(x^*, x'')$
+$S_{x^\ast} \subseteq D \;\text{s.t.}\; |S_{x^\ast}| = k, \forall (x', y') \in D \setminus S_{x^\ast},\quad \text{dist}(x^\ast, x') \ge \max_{(x'', y'') \in S_{x^\ast}} \text{dist}(x^\ast, x'')$
 
-It means that you pick a subset $S_{x^*}$ from your dataset $D$. This subset must contain exactly $k$ elements. These elements are supposed to be the neighbors of $x^*$. Then, the second line says that take any point $(x’, y’)$ not in the chosen subset $S_{x^*}$. Its distance to $x^*$ must be greater or equal to the distance of the farthest point inside $S_{x^*}$. 
+It means that you pick a subset $S_{x^\ast}$ from your dataset $D$. This subset must contain exactly $k$ elements. These elements are supposed to be the neighbors of $x^\ast$. Then, the second line says that take any point $(x’, y’)$ not in the chosen subset $S_{x^\ast}$. Its distance to $x^\ast$ must be greater or equal to the distance of the farthest point inside $S_{x^\ast}$. 
 
 ### Regression
 
 If the label $y$ are numbers, k-NN predicts by averaging the values of neighbors:
 
-$\hat{y} = h(x^*) = \frac{1}{k} \sum_{(x_i'', y_i'') \in S_{x^*}} y_i''$
+$\hat{y} = h(x^\ast) = \frac{1}{k} \sum_{(x_i'', y_i'') \in S_{x^\ast}} y_i''$
 
 ### Classification
 
 If the label $y$ are numbers, k-NN predicts by majority vote: 
 
-$\hat{y} = h(x^*) = \text{mode}\big(\{\, y_i'' : (x_i'', y_i'') \in S_{x^*} \,\}\big)$
+$\hat{y} = h(x^\ast) = \text{mode}\big(\{\, y_i'' : (x_i'', y_i'') \in S_{x^\ast} \,\}\big)$
 
 ### Distance Metric
 
-The definition of the set $S_{x^*}$ is strongly dependent on the distance metric that is used. The better the chosen metric reflects the similarity among points the better the resulting model
+The definition of the set $S_{x^\ast}$ is strongly dependent on the distance metric that is used. The better the chosen metric reflects the similarity among points the better the resulting model
 will be. One of the most common metrics used is the Minkowski distance:
 
 $\text{dist}(x, z) = \left( \sum_{j=1}^{D} |x_j - z_j|^p \right)^{1/p}$
@@ -70,7 +68,7 @@ The algorithm doesn’t learn an explicit model. It stores the training instance
 
 k‑NN learns nothing like that. It keeps the dataset and waits. 
 
-When you give k‑NN a new point x∗, it doesn’t use a formula or a learned model.
+When you give k‑NN a new point $x^\ast$, it doesn’t use a formula or a learned model.
 Instead, it:
 
 1. Looks at all stored training points
