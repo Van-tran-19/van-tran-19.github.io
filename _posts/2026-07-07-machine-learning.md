@@ -1,7 +1,7 @@
 ---
 title: "Introduction to Machine Learning"
 date: 2026-07-07 15:06:00 +0200
-categories: [Machine Learning]
+categories: [MachineLearning, Kaggle]
 tags: [ML, Deep Learning, Decision Trees, Random Forest, Pandas, Scikit-Learn]
 math: true
 ---
