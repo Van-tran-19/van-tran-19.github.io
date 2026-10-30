@@ -1569,7 +1569,7 @@ def echo(request):
     return jsonify(build_echo(message))
 ```
 
-The next step is to deploy [`main.py`](http://main.py) as a gen2 cloud function. 
+The next step is to deploy `main.py` as a gen2 cloud function. 
 
 **What is an entry point?** 
 
