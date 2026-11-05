@@ -33,7 +33,7 @@ A daemon process (or background server) is a computer program that runs continuo
 
 During this lab, I work with sales in weather data. The diagram of tables is: 
 
-![image.png](image.png)
+<img width="193" height="384" alt="image" src="https://github.com/user-attachments/assets/7c87c027-22db-43ba-85c5-0cd0a4fe32c3" />
 
 ### First question
 
